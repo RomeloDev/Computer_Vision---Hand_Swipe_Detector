@@ -4,9 +4,9 @@ import time
 
 class SwipeDetector:
     def __init__(self, threshold=0.10, display_duration=1):
-        self.cap = cv2.VideoCapture(0)
-        self.hands = mp.solutions.hands.Hands()
-        self.mp_draw = mp.solutions.drawing_utils
+        self.cap = cv2.VideoCapture(0) # Open the webcam
+        self.hands = mp.solutions.hands.Hands() # Initialize mediapipe hands model
+        self.mp_draw = mp.solutions.drawing_utils # Utility for drawing hand landmarks
         self.previous_x = None
         self.threshold = threshold
         self.swipe_text = ""
@@ -36,8 +36,8 @@ class SwipeDetector:
                     img, 
                     hand_landmarks, 
                     mp.solutions.hands.HAND_CONNECTIONS, 
-                    mp.solutions.drawing_utils.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=3), 
-                    mp.solutions.drawing_utils.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2)
+                    self.mp_draw.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=3), 
+                    self.mp_draw.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2)
                 )
         
         return img, hand_count
