@@ -38,6 +38,10 @@ class SwipeDetector:
                 )
         
         return img
+    
+    def reset_previous_x(self):
+        self.previous_x = None
+        self.swipe_direction = None
 
 def load_background_videos(folder_path):
     bg_videos = []
@@ -61,6 +65,7 @@ def main():
     bg_videos = load_background_videos('bg_videos')
     current_bg_index = -1  # -1 means original background (no video)
 
+
     previous_time = time.time()
 
     while True:
@@ -70,7 +75,7 @@ def main():
             break
 
         img = cv2.flip(img, 1)
-        img = cv2.resize(img, (1200, 800))
+        img = cv2.resize(img, (1200, 760))
 
         img = swipe_detector.process_frame(img)
 
@@ -81,11 +86,13 @@ def main():
                     current_bg_index = (current_bg_index + 1) % len(bg_videos)
                 elif swipe_detector.swipe_direction == "left":
                     current_bg_index = (current_bg_index - 1) % len(bg_videos)
-                swipe_detector.swipe_direction = None  # Reset after processing
+                swipe_detector.reset_previous_x()  # Reset after processing
 
         # Set background
         if current_bg_index == -1:
             imgOut = img
+            cv2.putText(imgOut, f"Current Background: Original", (10, 100),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
         else:
             success_bg, imgBg = bg_videos[current_bg_index].read()
             if not success_bg:
@@ -93,8 +100,10 @@ def main():
                 success_bg, imgBg = bg_videos[current_bg_index].read()
 
             # imgBg = cv2.resize(imgBg, (img.shape[1], img.shape[0]))
-            imgBg = cv2.resize(imgBg, (1200, 800))
-            imgOut = segmentator.removeBG(img, imgBg, 0.90)
+            imgBg = cv2.resize(imgBg, (1200, 760))
+            imgOut = segmentator.removeBG(img, imgBg, 0.50)
+            cv2.putText(imgOut, f"Current Background: {current_bg_index + 1}", (10, 100),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         # Calculate and display FPS
         current_time = time.time()
