@@ -70,7 +70,7 @@ while True:
     if current_bg_index == -1:
         imgOut = img  # Show original
     else:
-        imgOut = segmentator.removeBG(img, bg_images[current_bg_index], 0.5)
+        imgOut = segmentator.removeBG(img, bg_images[current_bg_index], 0.70)
 
     # Stack Images
     imgStacked = cvzone.stackImages([img, imgOut], 2, 1)
@@ -91,7 +91,7 @@ while True:
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Show the result
-    cv2.imshow("BG Remover + Swipe Controller", imgStacked)
+    cv2.imshow("BG Remover + Swipe Controller", imgOut)
 
     # Exit
     if cv2.waitKey(1) & 0xFF == ord('q'):
